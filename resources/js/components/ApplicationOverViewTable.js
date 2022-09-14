@@ -11,7 +11,7 @@ const columns = [
     dataIndex: 'image',
     render: (record) => (
          
-      <img src={record} width={50}/>
+      <img src={record} className='rounded-circle' width={50} height={50}/>
       
     ),
 

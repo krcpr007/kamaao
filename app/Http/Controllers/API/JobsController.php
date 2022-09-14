@@ -262,8 +262,6 @@ class JobsController extends Controller
     {
         # code...
         $Job = Job::find($id);
-        
-        
         $Job->delete();
         return response()->json([
             'status'=>204,

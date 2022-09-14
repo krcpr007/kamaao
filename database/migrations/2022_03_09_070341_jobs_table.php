@@ -42,7 +42,9 @@ class JobsTable extends Migration
             $table->string('doc_req');
             $table->string('add_req');
             $table->string('status');
+            $table->softDeletes();
             $table->timestamps();
+
         });
     }
 
