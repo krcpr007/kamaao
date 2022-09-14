@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Job;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Exports\JobsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Storage;
 use File;
 
@@ -22,7 +24,10 @@ class JobsController extends Controller
         else
         {
             // get all job
-            $job=DB::table('jobs')->where('is_expired','0')->orderby('id','desc')->get();
+            $job=DB::table('jobs')
+            ->join('companies', 'companies.id', '=', 'jobs.company_id')
+            ->select('jobs.*', 'companies.company_logo')
+            ->where('is_expired','0')->orderby('id','desc')->get();
         }
         
         return response()->json([
@@ -57,13 +62,6 @@ class JobsController extends Controller
      */
     public function store(post_job $request)
     {
-        // $validated = $request->validated();
-        
-        // if($validated)
-        // {
-
-        // }
-        
     
         $Job = new Job;
         $Job->call_action=$request->input('call_action');
@@ -107,6 +105,106 @@ class JobsController extends Controller
         ]);
     }
 
+
+    
+    public function update(Request $request)
+    {    
+        $validater = Validator::make($request->all(),
+        [
+            'job_id'=> 'required|integer',
+            'job_title'=> 'required',
+            'sub_title'=> 'required',
+            'job_type'=> 'required',
+            'job_category'=> 'required',
+            'expiry_date'=> 'required|date',
+            'total_openings'=> 'required|integer',
+            'salary_min'=> 'required|integer',
+            'salary_max'=> 'required|integer',
+            'state'=> 'required',
+            'city'=> 'required',
+            'area'=> 'required',
+            'roles_responsibilities'=> 'required',
+            'mini_edu_req'=> 'required',
+            'year_req'=> 'required',
+            'month_req'=> 'required',
+            'skill_req'=> 'required',
+            'doc_req'=> 'required',
+            'company_id'=> 'required',
+            'add_req'=> 'string|nullable',
+        ]);
+
+        if($validater->fails())
+        {
+            return response()->json([
+                'status'=>422,
+                'validation_errors'=>$validater->errors(),
+            ]);
+        }else
+        {
+            $job =  Job::find($request->job_id);
+           
+            if($job)
+            {
+                
+                // $Job = new Job;
+                $job->call_action=$request->input('call_action');
+                $job->company_id=$request->input('company_id');
+                $job->call_action1=$request->input('call_action1');
+                $job->job_title=$request->input('job_title');
+                $job->sub_title=$request->input('sub_title');
+                $job->job_type=$request->input('job_type');
+                $job->job_category=$request->input('job_category');
+                $job->expiry_date=$request->input('expiry_date');
+                $job->total_openings=$request->input('total_openings');
+                $job->salary_min=$request->input('salary_min');
+                $job->salary_max=$request->input('salary_max');
+                $job->state=$request->input('state');
+                $job->city=$request->input('city');
+                $job->area=$request->input('area');
+                $job->roles_responsibilities=$request->input('roles_responsibilities');
+                $job->status='enable';
+                $job->mini_edu_req=$request->input('mini_edu_req');
+                $job->year_req=$request->input('year_req');
+                $job->month_req=$request->input('month_req');
+                $job->skill_req=$request->input('skill_req');
+                $job->doc_req=$request->input('doc_req');
+                $job->add_req=$request->input('add_req'); 
+               
+                if($request->hasfile('descri_video'))
+                {
+                   
+                    if(File::exists(public_path('video/'.$job->descri_video)))
+                    {
+                        File::delete(public_path('video/'.$job->descri_video));
+                    }
+
+                    
+                    $video      =   $request->file('descri_video');
+                    $ext        =   $video->extension();
+                    $video_name =   time().'.'.$ext;
+                    
+                    $video->move(public_path('video'),$video_name);
+                    $job->descri_video=$video_name;
+                    
+                }
+
+                $job->save();
+                return response()->json([
+                    'status'=>200,
+                    'message'=>'Job Details updated'
+
+                ]);
+            }
+            else
+            {
+                return response()->json([
+                    'status'=>404,
+                    'message'=>'Something Went Wrong'
+                ]);
+            }
+        }
+    }
+
     public function do_like(Request $request)
     {
         $table_name = $request->type; // Either jobs OR Product can be sent
@@ -146,108 +244,19 @@ class JobsController extends Controller
         
     }
 
+
+    public function export_jobs(Request $request)
+    {
+        $export_as = $request->input('export_as');
+        $export_as = 'xlsx'; //csv,xlsx 
+        return Excel::download(new JobsExport, 'jobs.'.$export_as);
+    }
+    
     /**
      * GYAANESH WORK ENDS
      */
     
-    public function update(Request $request, $id)
-    {    $validater = Validator::make($request->all(),[
-        'company_legal_name'=>'required|max:19',
-        'company_popular_name'=>'required|max:191',
-
-        'company_url'=>'required|max:191',
-        'about_company'=>'required|max:191',
-        'call_action'=>'required|max:191'
-        ]);
-
-
-        if($validater->fails())
-        {
-            return response()->json([
-                    'status'=>422,
-                    'validation_errors'=>$validater->errors(),
-                ]);
-        }else
-        {
-            $Job =  Job::find($id);
-                    if($Job)
-                    {
-                        $Job->company_legal_name=$request->input('company_legal_name');
-                        $Job->company_popular_name=$request->input('company_popular_name');
-                        $Job->company_url=$request->input('company_url');
-                        $Job->about_company=$request->input('about_company');
-                        $Job->call_action=$request->input('call_action');
-                        $Job->call_action1=$request->input('call_action1');
-            
-            
-                        $Job->job_title=$request->input('job_title');
-                        $Job->sub_title=$request->input('sub_title');
-                        $Job->job_type=$request->input('job_type');
-                        $Job->job_category=$request->input('job_category');
-            
-                        $Job->expiry_date=$request->input('expiry_date');
-                        $Job->total_openings=$request->input('total_openings');
-                        $Job->salary_min=$request->input('salary_min');
-                        $Job->salary_max=$request->input('salary_max');
-                        $Job->state=$request->input('state');
-                        $Job->city=$request->input('city');
-                        $Job->area=$request->input('area');
-                        $Job->roles_responsibilities=$request->input('roles_responsibilities');
-                        $Job->status='enable';
-                        $Job->mini_edu_req=$request->input('mini_edu_req');
-                        $Job->year_req=$request->input('year_req');
-                        $Job->month_req=$request->input('month_req');
-                        $Job->skill_req=$request->input('skill_req');
-                        $Job->doc_req=$request->input('doc_req');
-                        $Job->add_req=$request->input('add_req');
-                       
-                       
-                    
-                        
-                    if($request->hasfile('company_logo'))
-                    {
-                        $Image=DB::table('jobs')->where(['id'=>$id])->get();
-                        $file=public_path('company/'.$Image[0]->company_logo);
-                        if(File::exists($file)){
-                            File::delete($file);
-                        }
-                        $image=$request->file('company_logo');
-                        $ext=$image->extension();
-                        $image_name=time().'.'.$ext;
-                        $image->move(public_path('company'),$image_name);
-                        $Job->company_logo=$image_name;
-                    }else
-                    {
-                    $Job->company_logo=$request->input('company_logo'); 
-                }
-                if($request->hasfile('descri_video')){
-                    $Image=DB::table('jobs')->where(['id'=>$id])->get();
-                    $file=public_path('video/'.$Image[0]->descri_video);
-                    if(File::exists($file)){
-                        File::delete($file);
-                    }
-                    $video=$request->file('descri_video');
-                    $ext=$video->extension();
-                    $video_name=time().'.'.$ext;
-                    $video->move(public_path('video'),$video_name);
-                    $Job->descri_video=$video_name;
-                }
-
-                $Job->save();
-                    return response()->json([
-                        'status'=>200,
-                        'message'=>'Job Details updated'
-
-                ]);
-                }else{
-                    return response()->json([
-                        'status'=>404,
-                        'message'=>'Job Id  Not Found'
-                ]);
-            
-        }
-    }
-   }   
+     
 
     public function delete(Request $request, $id)
     {

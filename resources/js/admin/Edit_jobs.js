@@ -293,7 +293,7 @@ const job_category_ops = job_catResponse.map((response) => (
 
     const company_id = props.match.params.id;
 
-    axios.post('api/update_jobs/' + company_id, formData).then(res => {
+    axios.post('api/update_jobs', formData).then(res => {
       if (res.data.status === 200) {
 
         setError([]);

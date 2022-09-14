@@ -27,6 +27,7 @@ class post_job extends FormRequest
     {
         return 
             [ 
+                'descri_video'=> 'bail|mimes:mp4,mov,ogg,qt | max:10240',//10mb restrict in front end
                 'job_title'=> 'required',
                 'sub_title'=> 'required',
                 'job_type'=> 'required',

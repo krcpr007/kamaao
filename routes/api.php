@@ -93,7 +93,7 @@ Route::post('/add_job',[JobsController::class,'store']);
 Route::get('/view_jobs',[JobsController::class,'index']);
 Route::get('/view_jobs/{id}',[JobsController::class,'index']);
 Route::get('/edit_jobs/{id}',[JobsController::class,'edit']);
-Route::post('/update_jobs/{id}',[JobsController::class,'update']);
+Route::post('/update_job',[JobsController::class,'update']);
 Route::post('/do_like',[JobsController::class,'do_like']);
 Route::delete('/delete_jobs/{id}',[JobsController::class,'delete']);
 Route::post('/disable_jobs/{id}',[JobsController::class,'disable_status']);
@@ -166,3 +166,7 @@ Route::post('/verify_user',[UserRegistrationController::class,'verify_number']);
 
 
 /* ---------------------- Front Api End ----------------------*/
+
+
+/* EXPORT DATA APIs */
+Route::get('/exportjobs',[JobsController::class,'export_jobs']);
