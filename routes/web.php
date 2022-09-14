@@ -37,6 +37,7 @@ Route::view('/admin/edit_prosubcategory/{id}','admindashboard');
 
 Route::view('admin/add_job','admindashboard');
 Route::view('admin/view_jobs','admindashboard');
+Route::view('admin/view_jobs/{id}','admindashboard');
 Route::view('admin/edit_jobs/{id}','admindashboard');
 // Employee
 

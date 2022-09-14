@@ -4,12 +4,11 @@ user registration and login with phone =>http://localhost:8000/api/user_login/
 
 user verify with otp =>http://localhost:8000/api/verify_user/
 
-
 /* ---------------------- Admin Api Start ----------------------*/
 //for admin login
-Route::middleware(['auth:sanctum'])->group(function (){
+Route::middleware(['auth:sanctum'])->group(function ()
+{
     http://localhost:8000/api/logout',[AuthController::class,'logout']);
-
 });
 http://localhost:8000/api/admin_register'
 http://localhost:8000/api/add_employee',[AuthController::class,'add_employee']);
@@ -41,6 +40,7 @@ http://localhost:8000/api/fetch_company/{company_legal_name}
 
 http://localhost:8000/api/add_job
 http://localhost:8000/api/view_jobs
+http://localhost:8000/api/view_jobs/{id}
 http://localhost:8000/api/edit_jobs/{id}
 http://localhost:8000/api/update_jobs/{id}
 http://localhost:8000/api/delete_jobs/{id}

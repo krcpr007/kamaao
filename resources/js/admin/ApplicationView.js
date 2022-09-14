@@ -16,10 +16,12 @@ function ApplicationView(props) {
         remark:''
     })
     const [user_application,setUser_application]=useState('');
+    
     function application_details(){
         const application_id=props.match.params.id;
         axios.get(`api/application_view/${application_id}`).then((res)=>{
             console.log(res.data.status);
+            console.log(res.data);
             if(res.data.status=200){
                 setUser_application(res.data.app);
                 setStatus(res.data.app[0].status);
@@ -206,10 +208,11 @@ function ApplicationView(props) {
                             </div>
                         </div>
                     </div>
+                    
                     {/* personal Details Section */}
-                    <div className='row'>
-                        <div className='col-12 leftBorder'>
-                            <div className='row paddingLeft50 border-bottom'>
+                    <div className='row leftBorder'>
+                        <div className=' row paddingLeftRight TimelineSEction'>
+                            
                                 <div className='col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12'>
                                     <div className='row'>
                                         <div className='col-xl-3 col-lg-3 col-md-3 col-sm-6 col-6'>
@@ -234,30 +237,36 @@ function ApplicationView(props) {
                                         </div>
                                     </div>
                                 </div>
+                          
+                            
+                          
                                 <div className='col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12'>
-                                <p className='RemarkText'><button type="button" className="ApplicationButton" data-bs-toggle="modal" data-bs-target="#remark">Add Remarks</button>
-                                </p>
+                                    <p className='RemarkText'>
+                                        <button type="button" className="ApplicationButton" data-bs-toggle="modal" data-bs-target="#remark">
+                                            Add Remarks
+                                            </button>
+                                    </p>
                                     {/* <!-- Modal --> */}
                                     <div className="modal fade" id="remark" tabIndex="-1" aria-labelledby="remarkModalLabel" aria-hidden="true">
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title" id="remark">Add Remarks</h5>
-                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <div className="modal-dialog">
+                                            <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title" id="remark">Add Remarks</h5>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                            <textarea name="remark"
+                                                placeholder='Ex : Eleifend risus ante ad erat elit quisque cursus, quisque mollis aenean ultrices arcu auctor, sollicitudin curae vitae quam netus facilisis, tristique tellus viverra, a cubilia luctus viverra eleifend magna varius, ultrices sed etiam at velit habitant tristique lectus!'
+                                                onChange={handeRemark}
+                                                className="form-control" id="steps" rows="5" cols="5" value={remarkInput.remark}>
+                                                </textarea>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <span  className="btn btn-primary" onClick={()=>Remarkapplication()}>Submit</span>
+                                            </div>
                                         </div>
-                                        <div className="modal-body">
-                                        <textarea name="remark"
-                                            placeholder='Ex : Eleifend risus ante ad erat elit quisque cursus, quisque mollis aenean ultrices arcu auctor, sollicitudin curae vitae quam netus facilisis, tristique tellus viverra, a cubilia luctus viverra eleifend magna varius, ultrices sed etiam at velit habitant tristique lectus!'
-                                            onChange={handeRemark}
-                                            className="form-control" id="steps" rows="5" cols="5" value={remarkInput.remark}>
-                                            </textarea>
                                         </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <span  className="btn btn-primary" onClick={()=>Remarkapplication()}>Submit</span>
-                                        </div>
-                                    </div>
-                                    </div>
                                     </div>
                                      
                                     <div className='RemarkDetailBox'>
@@ -265,26 +274,24 @@ function ApplicationView(props) {
                                         {user_application[0].remark}
                                         </p>
                                     </div>
+                                    {/* <div className='row'>
+                                        <div className='col-12 border-bottom'>
+                                            <select className="custom-select custom-selectTimeline custom-UpdateStatus" id="inputGroupSelect04">
+                                                <option >Update Status</option>
+                                            </select>
+                                        </div>
+                                    </div> */}
                                     <div className='row'>
-                        <div className='col-12 border-bottom'>
-                            <select className="custom-select custom-selectTimeline custom-UpdateStatus" id="inputGroupSelect04">
-                                <option >Update Status</option>
-                                
-                            </select>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col-12 UpdateStatusBox border-bottom'>
-                            <p className='backgroung-gray'>In Process</p>
-                            <p className={(user_application[0].status=='Referred')?'backgroung-orange':'backgroung-gray' }onClick={()=>referredfunction('Referred')}>Referred  </p>
-                            <p className='backgroung-gray'>Rejected  </p>
-                        </div>
-
-                        
-                    </div>
+                                        <div className='col-12 UpdateStatusBox border-bottom'>
+                                            <p className='backgroung-gray'>In Process</p>
+                                            <p className={(user_application[0].Is_reffered==1)?'backgroung-orange':'backgroung-gray' } onClick={()=>referredfunction('Referred')}>Referred  </p>
+                                            <p className='backgroung-gray'>Rejected  </p>
+                                        </div>                                        
+                                    </div>
                                 </div>
-                                
-                            </div>
+                           </div>
+                           <div>
+
                             {/* Details Section End */}
                             {/* Job Details Section Start */}
                             <div className='row paddingLeft50 border-bottom'>
@@ -334,8 +341,7 @@ function ApplicationView(props) {
 
 
                     <div className='row paddingLeft50'>
-                        <div className='col-12'>
-
+                        <div className='col-12'> 
                         </div>
                     </div>
                     {/* Job Details Section End */}
@@ -347,12 +353,13 @@ function ApplicationView(props) {
                 <div className='col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12 bgWhite'>
                     <div className='row'>
                         <div className='col-12 border-bottom'>
-                           
-                                <div className="custom-select custom-selectTimeline" >Follow Up Timeline</div>
-                                {/* <option defaultValue="1">One</option>
+                            <div className="custom-select custom-selectTimeline" >Follow Up Timeline</div>
+                                {
+                                /* <option defaultValue="1">One</option>
                                 <option defaultValue="2">Two</option>
-                                <option defaultValue="3">Three</option> */}
-                            {/* </select> */}
+                                <option defaultValue="3">Three</option> */
+                                }
+                                {/* </select> */}
                         </div>
                        { fetchfollow.map((item) => {
                             return(

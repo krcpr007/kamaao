@@ -29,41 +29,35 @@ class UserRegistrationController extends Controller
     public function phone_number(Request $request)
     {
         $otp=rand(33333,99999);
-       
-        $user_registration = User_registration::where('phone', $request->phone)->first();
-
-              
-            if( $user_registration){
-                $update= DB::table('user_registrations')
-        ->where('phone', $request->phone)
-        ->update(['otp'  => $otp]);
-            
-        return response()->json([
-            'status'=>200,
-            'username'=>$user_registration->name,
-            'user_id'=>$user_registration->id,
-            'message'=>'Otp Send Successfully',
-            'msg'=>'Your One Time Password Is'.' '.$otp
-                ]);
-
-                }
-            
-               
-        else{
-        $user_registration= User_registration::create([
+        $user_registration = User_registration::where('phone', $request->phone)->first();              
+        
+        if( $user_registration)
+        {
+            $update= DB::table('user_registrations')
+            ->where('phone', $request->phone)
+            ->update(['otp'  => $otp]);
+            return response()->json([
+                'status'=>200,
+                'username'=>$user_registration->name,
+                'user_id'=>$user_registration->id,
+                'message'=>'Otp Send Successfully',
+                'msg'=>'Your One Time Password Is'.' '.$otp
+            ]);
+        }               
+        else
+        {
+            $user_registration= User_registration::create([
             'phone'=>$request->phone,
             'otp'=>$otp,
+            ]);
 
-        ]);
-
-        return response()->json([
-            'status'=>200,
-            'username'=>$user_registration->name,
-            'user_id'=>$user_registration->id,
-            'message'=>'Otp Send Successfully',
-            'msg'=>'Your One Time Password Is'.' '.$otp
-
-    ]);
+            return response()->json([
+                'status'=>200,
+                'username'=>$user_registration->name,
+                'user_id'=>$user_registration->id,
+                'message'=>'Otp Send Successfully',
+                'msg'=>'Your One Time Password Is'.' '.$otp
+            ]);
         }
     }
 

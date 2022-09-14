@@ -1,3 +1,6 @@
+
+//URL admin/all_refferd_application
+
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import swal from 'sweetalert';
@@ -15,7 +18,7 @@ function ApplicationRefferdView() {
                 <Breadcrums name='All Refferd Application'/>
                 <div className='row'>
                     <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12'>
-                        <h4 className='applicationHeadingText'>Overview</h4>
+                        <h4 className='applicationHeadingText'>Overviews</h4>
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 ApplicationButtonBox'>
                      <button className='ApplicationButton'> Massage</button>

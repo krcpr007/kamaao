@@ -91,9 +91,10 @@ Route::post('/enable_prosubcategory/{id}',[SubcategoryController::class,'pro_sub
 
 Route::post('/add_job',[JobsController::class,'store']);
 Route::get('/view_jobs',[JobsController::class,'index']);
+Route::get('/view_jobs/{id}',[JobsController::class,'index']);
 Route::get('/edit_jobs/{id}',[JobsController::class,'edit']);
 Route::post('/update_jobs/{id}',[JobsController::class,'update']);
-Route::post('/like_job/{id}',[JobsController::class,'do_like']);
+Route::post('/do_like',[JobsController::class,'do_like']);
 Route::delete('/delete_jobs/{id}',[JobsController::class,'delete']);
 Route::post('/disable_jobs/{id}',[JobsController::class,'disable_status']);
 Route::post('/enable_jobs/{id}',[JobsController::class,'enable_status']);
@@ -131,10 +132,12 @@ Route::post('/enable_project/{id}',[ProjectController::class,'enable_status']);
 //application 
 
 Route::get('/view_application',[ApplicationController::class,'application_view']);
+Route::post('/store_application',[ApplicationController::class,'store']);
+Route::post('/update_application_stage',[ApplicationController::class,'update_application_stage']);
 Route::get('/view_application_refferd',[ApplicationController::class,'application_view_refferd']);
 Route::post('/assign_application',[ApplicationController::class,'Application_assign']);
-Route::get('/application_view/{id}',[ApplicationController::class,'Application_user']);
-Route::post('/application_status/{id}',[ApplicationController::class,'application_status']);
+Route::get('/application_view/{id}',[ApplicationController::class,'get_application_details']);
+Route::post('/application_status/{id}',[ApplicationController::class,'update_status']);
 Route::post('/application_remark/{id}',[ApplicationController::class,'application_remark']);
 Route::post('/applcation_followup/',[ApplicationController::class,'applcation_followup']);
 Route::post('/referredstatus/',[ApplicationController::class,'referredstatus']);
