@@ -150,7 +150,7 @@ const Sidebar = (props) => {
                         </Link>
                     </div>
                     {(()=>{
-                    if(props.user_type==2||props.user_type==3){
+                    
                 return(
                     <>
                     <div className="collapsed RowBg">
@@ -162,7 +162,6 @@ const Sidebar = (props) => {
                     </>
                      ); 
                   
-                    }
                   })()}
                     {(()=>{
                     if(props.user_type==2 ||props.user_type==1){

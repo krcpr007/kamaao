@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function google_login(Request $request)
     {
         $validater = Validator::make($request->all(),[
-            'email'=>'email|max:191|unique:users,email',
+            'email'=>'email|unique:users,email',
         ]);
 
         if($validater->fails())
@@ -68,16 +68,14 @@ class AuthController extends Controller
     {
         $validater = Validator::make($request->all(),[
             'name'=>'required|max:191',
-            'email'=>'required|email|max:191|unique:users,email',
+            'email'=>'required|email|unique:users,email',
             'password'=>'required|min:8'
-
-
         ]);
 
         if($validater->fails())
         {
                 return response()->json([
-                        'validation_errors'=>$validater->messages(),
+                        'validation_errors'=>$validater->errors(),
                 ]);
         }else{
             $user = User::create([
@@ -107,7 +105,7 @@ class AuthController extends Controller
         if($validater->fails())
         {
             return response()->json([
-                'validation_errors'=>$validater->messages(),
+                'validation_errors'=>$validater->errors(),
             ]);
         }
         else

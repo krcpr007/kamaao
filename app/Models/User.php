@@ -25,6 +25,7 @@ class User extends Authenticatable
         'profile_pic',
         'user_type',
         'enc_pass',
+        'team_leader',
         'status',
     ];
 

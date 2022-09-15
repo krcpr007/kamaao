@@ -78,7 +78,7 @@ class AuthController extends Controller
         if($validater->fails())
         {
                 return response()->json([
-                        'validation_errors'=>$validater->messages(),
+                        'validation_errors'=>$validater->errors(),
                 ]);
         }else{
             $user = User::create([
@@ -168,24 +168,24 @@ class AuthController extends Controller
     public function add_employee(Request $request)
     {
         $employee = new User;
-            $employee->name=$request->input('employee_name');
-            $employee->email=$request->input('employee_email');
-            $employee->password=Hash::make($request->input('employee_pass'));
-            $employee->mobile=$request->input('mobile');
-            $employee->enc_pass=$request->input('employee_pass');
-            $employee->user_type=$request->input('employee_designation');
-            $employee->status='enable';
-            if($request->hasfile('profile_pic')){
-                $image=$request->file('profile_pic');
-                $ext=$image->extension();
-                $image_name=time().'.'.$ext;
-                $image->move(public_path('Profile_pic'),$image_name);
-                $employee->profile_pic=$image_name;
-            }
-            $employee->save();
-            
-                $token = $employee->createToken($employee->email.'_Token')->plainTextToken;
-            
+        $employee->name=$request->input('employee_name');
+        $employee->email=$request->input('employee_email');
+        $employee->password=Hash::make($request->input('employee_pass'));
+        $employee->mobile=$request->input('mobile');
+        $employee->enc_pass=$request->input('employee_pass');
+        $employee->team_leader=$request->input('team_leader');
+        $employee->user_type=$request->input('employee_designation');
+        $employee->status='enable';
+        if($request->hasfile('profile_pic'))
+        {
+            $image=$request->file('profile_pic');
+            $ext=$image->extension();
+            $image_name=time().'.'.$ext;
+            $image->move(public_path('Profile_pic'),$image_name);
+            $employee->profile_pic=$image_name;
+        }
+        $employee->save();
+            // $token = $employee->createToken($employee->email.'_Token')->plainTextToken;
             return response()->json([
                 'status'=>200,
                 'message'=>'Employee Details Inserted Successfully'
@@ -201,7 +201,39 @@ class AuthController extends Controller
                 'status'=>200,
                 'employee'=>$employee
         ]);
+    }
 
+    public function get_team(Request $request)
+    {
+        $validated = Validator::make($request->all(),[
+            'user_id'=>'required|integer',
+        ]);
+        if($validated->fails())
+        {
+                return response()->json([
+                    'status'=>422,
+                    'validation_errors'=>$validated->errors(),
+                ],422);
+        }
+        else
+        {
+            $team   =   DB::table('users')->where('team_leader','=',$request->user_id)
+            ->select('id', 'name', 'email', 'user_type', 'team_leader')->get();
+            if(count($team))
+            {
+                return response()->json([
+                        'status'=>200,
+                        'employee'=>$team
+                ]);
+            }
+            else
+            {
+                return response()->json([
+                    'status'=>204,
+                    'message'=> "No Record found"
+            ],200);
+            }
+        }
     }
     public function edit($id){
         $employee = User::find($id);

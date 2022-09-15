@@ -57,12 +57,12 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $validater = Validator::make($request->all(),[
-            'company_legal_name'=>'required|max:191|unique:companies,company_legal_name',
-            'company_popular_name'=>'required|max:191',
-            'company_url'=>'required|max:191',
+            'company_legal_name'=>'required|unique:companies,company_legal_name',
+            'company_popular_name'=>'required',
+            'company_url'=>'required',
             'company_logo'=>'required|mimes:jpeg,jpg,png',
-            'about_company'=>'required|max:191',
-            //'call_action'=>'required|max:191'
+            'about_company'=>'required',
+            //'call_action'=>'required'
         ]);
 
         if($validater->fails())
@@ -105,12 +105,12 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {    $validater = Validator::make($request->all(),[
         'company_legal_name'=>'required|max:19',
-        'company_popular_name'=>'required|max:191',
+        'company_popular_name'=>'required',
         
 
-        'company_url'=>'required|max:191',
-        'about_company'=>'required|max:191',
-        //'call_action'=>'required|max:191'
+        'company_url'=>'required',
+        'about_company'=>'required',
+        //'call_action'=>'required'
     ]);
 
     if($validater->fails())

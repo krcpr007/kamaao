@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::post('/admin_register',[AuthController::class,'register']);
 Route::post('/add_employee',[AuthController::class,'add_employee']);
+Route::get('/get_team',[AuthController::class,'get_team']);
 Route::get('/view_employee',[AuthController::class,'view_employee']);
 Route::post('/enable_employee/{id}',[AuthController::class,'enable_employee']);
 Route::post('/disable_employee/{id}',[AuthController::class,'disable_employee']);
@@ -90,7 +91,7 @@ Route::post('/enable_prosubcategory/{id}',[SubcategoryController::class,'pro_sub
 //Jobs
 
 Route::post('/add_job',[JobsController::class,'store']);
-Route::get('/view_jobs',[JobsController::class,'index']);
+Route::middleware('auth:sanctum')->get('/view_jobs',[JobsController::class,'index']);
 Route::get('/view_jobs/{id}',[JobsController::class,'index']);
 Route::get('/edit_jobs/{id}',[JobsController::class,'edit']);
 Route::post('/update_job',[JobsController::class,'update']);

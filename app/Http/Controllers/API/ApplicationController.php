@@ -184,7 +184,7 @@ class ApplicationController extends Controller
             //         'param'=> $request->all()
             //     ],422);
             // }
-
+            // dd();
             if(auth('sanctum')->user()->user_type == '1' || auth('sanctum')->user()->user_type == '2')//super admin and sub admin
             {
                 $application    =   DB::table('job_application')
