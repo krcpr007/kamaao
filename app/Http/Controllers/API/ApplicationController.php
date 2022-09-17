@@ -498,27 +498,138 @@ class ApplicationController extends Controller
                 
             }
     }
+    /***
+     * Gyaanesh Work Started Here 
+     */
+        public function application_status(Request $request,$id)
+        {
+            
+            $status=$request->input('status');
+            $application=DB::table('job_application')->where('id',$id)
+                            ->update(['status'=>$status]);
 
-    public function application_status(Request $request,$id)
-    {
-        
-        $status=$request->input('status');
-        $application=DB::table('job_application')->where('id',$id)
-                        ->update(['status'=>$status]);
-
-        if($application){
-            return response()->json([
-                'status'=>200,
-                'message'=>' Application  status changed'
-                ]);
-        }else{
-            return response()->json([
-                'status'=>404,
-                'message'=>' Application  status not changed'
-                ]);
+            if($application){
+                return response()->json([
+                    'status'=>200,
+                    'message'=>' Application  status changed'
+                    ]);
+            }else{
+                return response()->json([
+                    'status'=>404,
+                    'message'=>' Application  status not changed'
+                    ]);
+            }
         }
-    }
 
+        public function create_follow_up(Request $request)
+        {
+             /** TIME TO VALIDATE PARAMS */
+             $validater = Validator::make($request->all(),[
+                'application_id'    =>  'required|integer',
+                'comment'           =>  'required',
+                'follow_up_date'   =>  'required|date_format:Y-m-d',
+                'follow_up_time'    =>  'required|date_format:H:i',
+                'created_by'           =>  'required'
+            ]);
+
+            if($validater->fails())
+            {
+                return response()->json([
+                    'status'=>422,
+                    'errors'=>$validater->errors()
+                ],422);
+            }
+            else
+            { 
+            
+                $query=DB::table('application_followups')->insert($request->all());
+                if($query){
+                    return response()->json([
+                        'status'=>200,
+                        'message'=>'Follow Up added For Current Application  '
+                        ]);
+                }else{
+                    return response()->json([
+                        'status'=>404,
+                        'message'=>'Something Went Wrong'
+                        ]);
+                }
+            }
+        }
+
+        public function close_follow_up(Request $request)
+        {
+            /** TIME TO VALIDATE PARAMS */
+            $validater = Validator::make($request->all(),[
+                'id'        =>  'required|integer',
+                'user_id'   =>  'required'
+            ]);
+
+            if($validater->fails())
+            {
+                return response()->json([
+                    'status'=>422,
+                    'errors'=>$validater->errors()
+                ],422);
+            }
+            else
+            {
+                $do_job    =   DB::table('application_followups')->where('id',$request->id)
+                ->update(['has_followed_up'=>1, 'followed_by'=>$request->user_id]);
+                
+                if($do_job){
+                    return response()->json([
+                        'status'=>200,
+                        'message'=>' Application  status changed'
+                        ]);
+                }else{
+                    return response()->json([
+                        'status'=>404,
+                        'message'=>'Something Went Wrong'
+                        ]);
+                } 
+            }
+        }
+
+        public function get_my_follow_up(Request $request)
+        {
+            $follow_ups =DB::table('application_followups')
+            ->where(['created_by'=>$request->created_by]);
+
+            if($request->type =='current')
+            {
+                $follow_ups->where('follow_up_date', date('Y-m-d'));
+
+            }elseif ($request->type =='upcoming') 
+            {
+                $follow_ups->where('follow_up_date','>', date('Y-m-d'));
+                
+            }
+            else
+            {
+                $follow_ups->where('follow_up_date','<', date('Y-m-d'));
+            }
+            
+            
+            $follow_ups->orderBy('follow_up_time', 'ASC');
+            $result =   $follow_ups->get();
+            if(count($result)){
+                return response()->json([
+                    'status'=>200,
+                    'message'=> $result,
+                    'date'=>date('Y-m-d')
+                    ]);
+            }else{
+                return response()->json([
+                    'status'=>404,
+                    'message'=>"no follow up found for Date ".date('Y-m-d')
+                    ]);
+            }
+            
+        }
+    /***
+     * Gyaanesh Work Ends Here 
+     */
     
     public function application_remark_old(Request $request,$id)
     {
@@ -538,25 +649,7 @@ class ApplicationController extends Controller
         }
     }
 
-    public function applcation_followup(Request $request)
-    {
-        $comment=$request->input('comment');
-        $app_id=$request->input('app_id');
-        $comment_at	=date('d M,Y');
-        $comment_time=date('h:i:s a');
-        $query=DB::table('application_followup_time')->insert(['app_id' =>$app_id, 'comment' =>$comment ,'comment_at'=>$comment_at,'comment_time'=>$comment_time]);
-        if($query){
-            return response()->json([
-                'status'=>200,
-                'message'=>'Comment added on Application  '
-                ]);
-        }else{
-            return response()->json([
-                'status'=>404,
-                'message'=>' Comment not added on Application  '
-                ]);
-        }
-    }
+    
 
     public function applcation_followup_fetch($id)
     {

@@ -26,4 +26,19 @@ class Project extends Model
     "add_req",
     "status"
 ];
+
+    public function task()
+    {
+        return $this->hasMany(task::class, 'belong_to_project');
+        // return task::with('task_steps');
+    }
+
+    public function steps()
+    {
+        return $this->hasManyThrough(task_steps::class, task::class, 'belong_to_project' );
+    }
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

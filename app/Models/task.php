@@ -8,19 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class task extends Model
 {
     use HasFactory;
-    protected $fillable = ['company_legal_name','company_popular_name','company_url','company_logo','about_company','call_action',
-    "call_action1",
-    "task_title",
-    "price",
-    "per_download",
-    "expiry_date",
-    "total_openings",
+    protected $fillable = [
+        'task_title',
+        'type',
+        'company_id',
+        'price',
+        'expiry_date',
+        'number_of_steps',
+        'tnc',
+        'belong_to_project',
+        'is_enabled'
+    ];
 
-    "steps",
-    "term_condition",
-    "add_rew",
-    "ref_link",
-    "ref_code",
-    "status"
-];
+    public function task_steps()
+    {
+        return $this->hasMany(task_steps::class);
+    } 
 }

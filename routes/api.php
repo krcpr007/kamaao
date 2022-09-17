@@ -111,21 +111,22 @@ Route::post('/disable_product/{id}',[ProductController::class,'disable_status'])
 Route::post('/enable_product/{id}',[ProductController::class,'enable_status']);
 
 //Tasks
-
 Route::post('/add_task',[TaskController::class,'store']);
 Route::get('/view_task',[TaskController::class,'index']);
 Route::get('/edit_task/{id}',[TaskController::class,'edit']);
-Route::post('/update_task/{id}',[TaskController::class,'update']);
+Route::post('/update_task_status',[TaskController::class,'update_status']);
+Route::post('/update_task',[TaskController::class,'update']);
+
 Route::delete('/delete_task/{id}',[TaskController::class,'delete_task']);
 Route::post('/disable_task/{id}',[TaskController::class,'disable_status']);
 Route::post('/enable_task/{id}',[TaskController::class,'enable_status']);
 
 //Project 
-
+Route::get('/projects',[ProjectController::class,'index']);
 Route::post('/add_project',[ProjectController::class,'store']);
-Route::get('/view_project',[ProjectController::class,'index']);
 Route::get('/edit_project/{id}',[ProjectController::class,'edit']);
-Route::post('/update_project/{id}',[ProjectController::class,'update']);
+Route::post('/update_project',[ProjectController::class,'update']);
+Route::post('/project/update_status',[ProjectController::class,'update_status']);
 Route::delete('/delete_project/{id}',[ProjectController::class,'delete']);
 Route::post('/disable_project/{id}',[ProjectController::class,'disable_status']);
 Route::post('/enable_project/{id}',[ProjectController::class,'enable_status']);
@@ -140,8 +141,10 @@ Route::post('/assign_application',[ApplicationController::class,'Application_ass
 Route::get('/application_view/{id}',[ApplicationController::class,'get_application_details']);
 Route::post('/application_status/{id}',[ApplicationController::class,'update_status']);
 Route::post('/application_remark/{id}',[ApplicationController::class,'application_remark']);
-Route::post('/applcation_followup/',[ApplicationController::class,'applcation_followup']);
-Route::post('/referredstatus/',[ApplicationController::class,'referredstatus']);
+Route::post('/create_follow_up',[ApplicationController::class,'create_follow_up']);
+Route::post('/close_follow_up',[ApplicationController::class,'close_follow_up']);
+Route::get('/get_my_follow_up',[ApplicationController::class,'get_my_follow_up']);
+Route::post('/referredstatus',[ApplicationController::class,'referredstatus']);
 Route::get('/applcation_followup_fetch/{id}',[ApplicationController::class,'applcation_followup_fetch']);
 Route::get('/applcation_expire/{id}',[ApplicationController::class,'applcation_expire']);
 Route::delete('/delete_project/{id}',[ProjectController::class,'delete']);

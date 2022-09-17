@@ -17,7 +17,7 @@ function View_project() {
     const [loading , setLoading ] =useState(true);
   const [ companylist , setCompanylist] =useState([]);
   function showlist(){
-    axios.get('api/view_project').then(res=>{
+    axios.get('api/projects').then(res=>{
 
       if(res.status === 200){
         setCompanylist(res.data.projects)
