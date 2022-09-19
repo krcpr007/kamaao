@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Add_project;
+use App\Http\Traits\is_enabledTrait;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\task;
@@ -15,7 +16,7 @@ use File;
 
 class ProjectController extends Controller
 {
-
+ use is_enabledTrait;
 
     /**
      * Gyaanesh Work Starts
@@ -206,23 +207,12 @@ class ProjectController extends Controller
 
     public function update_status(Request $request)
     {
-        
-        $update   =   Project::where('id',$request->id)->update(['is_enabled'=>$request->new_status]);
+        return $update = $this->toggle_is_enable('projects', 'id', $request->id, $request->new_status);
+    }
     
-        if($update)
-        {
-            return response()->json([
-                'status'=>200,
-                'message'=>'Project Status Updated'
-            ]);
-        }
-        else
-        {
-            return response()->json([
-                'status'=>401,
-                'message'=>'Something Went Wrong'
-            ]);
-        }
+    public function do_like(Request $request)
+    {
+        return $this->like($request);
     }
 
  

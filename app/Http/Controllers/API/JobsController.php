@@ -9,12 +9,14 @@ use App\Models\Job;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Exports\JobsExport;
+use App\Http\Traits\do_likeTrait;
 use Maatwebsite\Excel\Facades\Excel;
 use Storage;
 use File;
 
 class JobsController extends Controller
 {
+    use do_likeTrait;
     public function index( Request $request, $id=null)
     {
         if($id)//getting single job by id
@@ -207,41 +209,7 @@ class JobsController extends Controller
 
     public function do_like(Request $request)
     {
-        $table_name = $request->type; // Either jobs OR Product can be sent
-        // print_r($request->all());
-        if($table_name =='jobs')
-        {
-            // Make Sure its unique
-            $table_row =  DB::table('jobs_liked_by_user')
-            ->where('job_id', $request->id)
-            ->where('user_id', $request->user_id)->get();
-            
-            if($table_row->count())
-            {
-                return response()->json([
-                    'status'=>409,
-                    'message'=>  'Already Liked',
-                ],409);
-            }
-            else
-            {
-                $update     = DB::table($table_name)->where('id', $request->id)->update(['like_count'=> DB::raw('like_count + 1'),]);
-                if($update){
-                    // Create User Like Log    
-                    DB::table('jobs_liked_by_user')->insert(
-                        [
-                            'job_id' => $request->id,
-                            'user_id' => $request->user_id
-                        ]);
-                    return response()->json([
-                        'status'=>200,
-                        'message'=>  rtrim($table_name, "s"). ' Liked',
-                    ]);
-                }
-                
-            }
-        }
-        
+        return $this->like($request);
     }
 
 

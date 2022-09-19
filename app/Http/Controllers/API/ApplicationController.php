@@ -234,6 +234,7 @@ class ApplicationController extends Controller
             $remarked_by    =   auth('sanctum')->user()->id;
             $validater  = Validator::make($request->all(),[
                 'remark'=>'required',
+                'remarked_by'=>'required',
             ]);
             if($validater->fails())
             {
@@ -253,18 +254,16 @@ class ApplicationController extends Controller
                     return response()->json([
                         'status'=>200,
                         'message'=>'Remark added on Application  '
-                        ]);
+                        ],200);
                 }
                 else
                 {
                     return response()->json([
                         'status'=>404,
                         'message'=>' Something went Wrong  '
-                        ]);
+                        ],404);
                 }
             }
-
-            
         }
 
         public function update_status(Request $request,$id)

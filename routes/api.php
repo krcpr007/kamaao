@@ -104,6 +104,7 @@ Route::post('/enable_jobs/{id}',[JobsController::class,'enable_status']);
 
 Route::post('/add_product',[ProductController::class,'store']);
 Route::get('/view_product',[ProductController::class,'index']);
+Route::post('/project/do_like',[ProductController::class,'do_like']);
 Route::get('/edit_product/{id}',[ProductController::class,'edit']);
 Route::post('/update_product/{id}',[ProductController::class,'update']);
 Route::delete('/delete_product/{id}',[ProductController::class,'delete']);

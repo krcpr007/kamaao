@@ -67,22 +67,8 @@ class TaskController extends Controller
 
     public function update_status(Request $request)
     {
-        $update   =   task::where('id',$request->id)->update(['is_enabled'=>$request->new_status]);
-       
-        if($update)
-        {
-            return response()->json([
-                'status'=>200,
-                'message'=>'Task Status Updated'
-            ]);
-        }
-        else
-        {
-            return response()->json([
-                'status'=>401,
-                'message'=>'Something Went Wrong'
-            ]);
-        }
+
+        return $update = $this->toggle_is_enable('tasks', 'id', $request->id, $request->new_status);
     }
 
 
