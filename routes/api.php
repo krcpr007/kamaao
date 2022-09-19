@@ -111,6 +111,7 @@ Route::post('/add_product',[ProductController::class,'store']);
 Route::get('/view_product',[ProductController::class,'index']);
 Route::post('/project/do_like',[ProductController::class,'do_like']);
 Route::get('/edit_product/{id}',[ProductController::class,'edit']);
+
 Route::post('/update_product/{id}',[ProductController::class,'update']);
 Route::delete('/delete_product/{id}',[ProductController::class,'delete']);
 Route::post('/disable_product/{id}',[ProductController::class,'disable_status']);
@@ -130,6 +131,7 @@ Route::post('/enable_task/{id}',[TaskController::class,'enable_status']);
 //Project 
 Route::get('/projects',[ProjectController::class,'index']);
 Route::post('/add_project',[ProjectController::class,'store']);
+Route::post('/create_project_application',[ProjectController::class,'create_project_application']);
 Route::get('/edit_project/{id}',[ProjectController::class,'edit']);
 Route::post('/update_project',[ProjectController::class,'update']);
 Route::post('/project/update_status',[ProjectController::class,'update_status']);
@@ -173,6 +175,8 @@ Route::get('/product_subcategory/{id}',[dynamic_dropdownController::class,'produ
 //user registration
 Route::post('/user_login',[UserRegistrationController::class,'phone_number']);
 Route::post('/verify_user',[UserRegistrationController::class,'verify_number']);
+Route::post('/upload_documents',[UserRegistrationController::class,'upload_document']);
+Route::get('/document_status/{id}',[UserRegistrationController::class,'document_status']);
 
 
 /* ---------------------- Front Api End ----------------------*/

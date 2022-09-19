@@ -114,4 +114,36 @@ class UserRegistrationController extends Controller
     {
         //
     }
+
+    public function upload_document(Request $request)
+    {
+        if($request->hasfile('document')){
+            $image=$request->file('document');
+            $ext=$image->extension();
+            $image_name= $request->user_id.'/'.time().'.'.$ext;
+            $image->move(public_path('user_documents/'.$request->user_id),$image_name);
+            $document='user_documents/'.$image_name;
+        }
+
+        $query=DB::table('user_documents')
+                ->insert(
+                    [
+                        'user_id' =>$request->user_id,
+                        'document_type' =>$request->document_type,
+                        'document'=>$document
+                        
+                    ]);
+
+    }
+    public function document_status(Request $request, $id)
+    {
+        $documents      =   DB::table('user_documents')->where('user_id', $id)->get();
+        if($documents)
+        {            
+            return response()->json([
+                'status'=>200,
+                'data'  => $documents
+            ]); 
+        }
+    }
 }

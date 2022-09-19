@@ -7,6 +7,7 @@ use App\Http\Requests\Add_project;
 use App\Http\Traits\is_enabledTrait;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\project_application;
 use App\Models\task;
 use App\Models\task_steps;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,7 @@ use File;
 
 class ProjectController extends Controller
 {
- use is_enabledTrait;
+    use is_enabledTrait;
 
     /**
      * Gyaanesh Work Starts
@@ -213,6 +214,31 @@ class ProjectController extends Controller
     public function do_like(Request $request)
     {
         return $this->like($request);
+    }
+
+    public function create_project_application(Request $request)
+    {
+        $hasUserApplied        =   project_application::where('user_id',$request->user_id )->where('project_id', $request->project_id)->get();
+        if(count($hasUserApplied))
+        {
+            return response()->json([
+                'status'=>400,
+                'message'=>'Already Applied For This Job',
+            ],400);
+        }
+        else
+        {        
+            $application                    =   new project_application();
+            $application->user_id           =   $request->user_id;
+            $application->project_id        =   $request->project_id;
+            $request->request->add(['status' => '0']);
+            $application->save();
+                       
+            return response()->json([
+                'status'=>200,
+                'message'=>'Application Submitted successfully'
+            ]);
+        }
     }
 
  

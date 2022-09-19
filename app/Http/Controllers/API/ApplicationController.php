@@ -38,7 +38,6 @@ class ApplicationController extends Controller
                 'company_id'=>'required|integer'
             ]);
 
-
             if($validater->fails())
             {
                 return response()->json([
@@ -53,9 +52,11 @@ class ApplicationController extends Controller
                 $application->job_id        =   $request->job_id;
                 $application->expiry_date   =   $request->expiry_date;
                 $application->save();
-                $request->request->add(['status' => 'default']);
-                $request->request->add(['application_id' =>$application->id]);
-                $request->request->add(['company_id' =>$request->company_id]);
+
+
+                $request->request->add(['status'            => 'default']);
+                $request->request->add(['application_id'    =>  $application->id]);
+                $request->request->add(['company_id'        =>  $request->company_id]);
                 
                 $create_defalut_refferance  =   $this->do_reffer($request);
                 return response()->json([
