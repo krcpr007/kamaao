@@ -60,7 +60,7 @@ class ProjectController extends Controller
         $Project->skill_req         =   $request->input('skill_req');
         $Project->doc_req           =   $request->input('doc_req');
         $Project->add_req           =   $request->input('add_req');
-            
+        $Project->opening_left      =   $request->total_openings;
         if($request->hasfile('descri_video')){
             $video=$request->file('descri_video');
             $ext=$video->extension();

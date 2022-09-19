@@ -30,7 +30,12 @@ use Illuminate\Support\Facades\Route;
 /* ---------------------- Admin Api Start ----------------------*/
 //for admin login
 // Route::middleware(['auth:sanctum'])->group(function (){
+    
     Route::post('/logout',[AuthController::class,'logout']);
+
+
+
+    
 // });
 Route::post('/admin_register',[AuthController::class,'register']);
 Route::post('/add_employee',[AuthController::class,'add_employee']);
