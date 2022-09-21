@@ -16,8 +16,8 @@ class ApplicationController extends Controller
 {
     /**
      * GYAANESH WORK STARTS
-     */
-        /**     CREATE A NEW JOB    **/   //GYAANESH
+    */
+    
         public function store(Request $request)
         {
             // First Make Sure This is Unique
@@ -33,7 +33,7 @@ class ApplicationController extends Controller
             /** TIME TO VALIDATE PARAMS */
             $validater = Validator::make($request->all(),[
                 'job_id'=>'required|max:19',
-                'expiry_date'=>'required|date',
+                'expiry_date'=>'required|date|after_or_equal:today',
                 'user_id'=>'required|max:191',
                 'company_id'=>'required|integer'
             ]);
@@ -78,35 +78,49 @@ class ApplicationController extends Controller
              * 
              * 
             */
-
             $user_application   =   DB::table('job_application')
                 ->join('user_registration', 'job_application.user_id', '=', 'user_registration.id')
                 ->join('jobs', 'job_application.job_id', '=', 'jobs.id')         
+                ->join('companies', 'companies.id', '=', 'jobs.company_id')         
                 ->join('job_app_reffered_to', 'job_application.id', '=', 'job_app_reffered_to.application_id')         
-                ->select(
-                    'job_application.id as application_id','job_application.*', 
-                    'user_registration.name','user_registration.gender','user_registration.mobile',
-                    'jobs.*', 'jobs.id as job_id',
-                    'job_app_reffered_to.id as refferal_id', 'job_app_reffered_to.status as refferal_status','job_app_reffered_to.current_stage as refferal_current_stage',
+                ->select
+                    (
+                        'job_application.id as application_id','job_application.*', 
+                        'user_registration.name','user_registration.gender','user_registration.mobile',
+                        'jobs.*', 'jobs.id as job_id',
+                        'companies.company_popular_name',
+                        'job_app_reffered_to.id as refferal_id', 'job_app_reffered_to.status as refferal_status','job_app_reffered_to.current_stage as refferal_current_stage',
                     )
                 ->where('job_application.id', $id)->get();
 
                 /**     INCLUDE ALL REMARKS ADDED TO THIS APPLICATION */
                 $remarks        =  DB::table('application_remarks')
-                ->join('users', 'application_remarks.remarked_by', '=', 'users.id')
+                ->join('users', 'users.id', '=', 'application_remarks.remarked_by')
                 ->select(
-                    'application_remarks.*', 
-                    'users.name as remarked_by',
-                    )
-                ->where('application_id', $id)->get();
-                $reffered_to    =  DB::table('job_app_reffered_to')->where('application_id', $id)->get();
+                        'application_remarks.*', 
+                        'users.name as remarked_by',
+                        )
+                ->where('application_remarks.application_id', $id)->get();
 
+                $follow_ups        =  DB::table('application_followups')
+                ->join('users', 'users.id', '=', 'application_followups.created_by')
+                ->select(
+                        'application_followups.*', 
+                        'users.name as created_by',
+                        )
+                ->where('application_followups.application_id', $id)->get();
+                
                 /**         CREATE A RESPONSE        */
 
                 return response()->json([
                 'status'=>200,
-                'app'=>$user_application,
-                'remarks'=>$remarks
+                'data'=>
+                [
+                    'application'   =>   $user_application,
+                    'remarks'       =>  $remarks,
+                // 'reffered_to'=>$reffered_to,
+                    'follow_ups'=> $follow_ups
+                ]
                 ]);
         }
 
@@ -160,6 +174,7 @@ class ApplicationController extends Controller
 
         public function application_view(Request $request)
         {
+            
 
             //temporary fixed as not getting from front end
             if ($request->input('type')) 
@@ -234,8 +249,8 @@ class ApplicationController extends Controller
         {
             $remarked_by    =   auth('sanctum')->user()->id;
             $validater  = Validator::make($request->all(),[
-                'remark'=>'required',
-                'remarked_by'=>'required',
+                'remark'=>'required| min:10',
+                'remarked_by'=>'required|integer',
             ]);
             if($validater->fails())
             {
@@ -332,10 +347,137 @@ class ApplicationController extends Controller
             }
 
         }
-        
+    
+        public function application_status(Request $request,$id)
+        {
+            
+            $status=$request->input('status');
+            $application=DB::table('job_application')->where('id',$id)
+                            ->update(['status'=>$status]);
+
+            if($application){
+                return response()->json([
+                    'status'=>200,
+                    'message'=>' Application  status changed'
+                    ]);
+            }else{
+                return response()->json([
+                    'status'=>404,
+                    'message'=>' Application  status not changed'
+                    ]);
+            }
+        }
+
+        public function create_follow_up(Request $request)
+        {
+            /** TIME TO VALIDATE PARAMS */
+            $validater = Validator::make($request->all(),[
+                'application_id'    =>  'required|integer',
+                'comment'           =>  'required',
+                'follow_up_date'   =>  'required|date_format:Y-m-d',
+                'follow_up_time'    =>  'required|date_format:H:i',
+                'created_by'           =>  'required'
+            ]);
+
+            if($validater->fails())
+            {
+                return response()->json([
+                    'status'=>422,
+                    'errors'=>$validater->errors()
+                ],422);
+            }
+            else
+            { 
+            
+                $query=DB::table('application_followups')->insert($request->all());
+                if($query){
+                    return response()->json([
+                        'status'=>200,
+                        'message'=>'Follow Up added For Current Application  '
+                        ]);
+                }else{
+                    return response()->json([
+                        'status'=>404,
+                        'message'=>'Something Went Wrong'
+                        ]);
+                }
+            }
+        }
+
+        public function close_follow_up(Request $request)
+        {
+            /** TIME TO VALIDATE PARAMS */
+            $validater = Validator::make($request->all(),[
+                'id'        =>  'required|integer',
+                'user_id'   =>  'required'
+            ]);
+
+            if($validater->fails())
+            {
+                return response()->json([
+                    'status'=>422,
+                    'errors'=>$validater->errors()
+                ],422);
+            }
+            else
+            {
+                $do_job    =   DB::table('application_followups')->where('id',$request->id)
+                ->update(['has_followed_up'=>1, 'followed_by'=>$request->user_id]);
+                
+                if($do_job){
+                    return response()->json([
+                        'status'=>200,
+                        'message'=>' Application  status changed'
+                        ]);
+                }else{
+                    return response()->json([
+                        'status'=>404,
+                        'message'=>'Something Went Wrong'
+                        ]);
+                } 
+            }
+        }
+
+        public function get_my_follow_up(Request $request)
+        {
+            $follow_ups =DB::table('application_followups')
+            ->where(['created_by'=>$request->created_by]);
+
+            if($request->type =='current')
+            {
+                $follow_ups->where('follow_up_date', date('Y-m-d'));
+
+            }elseif ($request->type =='upcoming') 
+            {
+                $follow_ups->where('follow_up_date','>', date('Y-m-d'));
+            }
+            else
+            {
+                $follow_ups->where('follow_up_date','<', date('Y-m-d'));
+            }
+            
+            $follow_ups->orderBy('follow_up_time', 'ASC');
+            $result =   $follow_ups->get();
+            if(count($result)){
+                return response()->json([
+                    'status'=>200,
+                    'message'=> $result,
+                    'date'=>date('Y-m-d')
+                    ]);
+            }else{
+                return response()->json([
+                    'status'=>404,
+                    'message'=>"no follow up found for Date ".date('Y-m-d')
+                    ]);
+            }
+            
+        }
+
     /**
      * ENDS GYAANESH WORK
      */
+
+     
     public function application_view_refferd()
     {
         if(auth('sanctum')->user()->user_type == '1' || auth('sanctum')->user()->user_type == '2')//super admin and sub admin
@@ -440,8 +582,8 @@ class ApplicationController extends Controller
     
     public function Application_assign(Request $request)
     {
-        $app_id=$request->application_id;
-        $assign_emp=$request->assign;
+        $app_id         =   $request->application_id;
+        $assign_emp     =   $request->assign;
 
         for($i=0;   $i<count($app_id);  $i++)
         {
@@ -498,138 +640,7 @@ class ApplicationController extends Controller
                 
             }
     }
-    /***
-     * Gyaanesh Work Started Here 
-     */
-        public function application_status(Request $request,$id)
-        {
-            
-            $status=$request->input('status');
-            $application=DB::table('job_application')->where('id',$id)
-                            ->update(['status'=>$status]);
 
-            if($application){
-                return response()->json([
-                    'status'=>200,
-                    'message'=>' Application  status changed'
-                    ]);
-            }else{
-                return response()->json([
-                    'status'=>404,
-                    'message'=>' Application  status not changed'
-                    ]);
-            }
-        }
-
-        public function create_follow_up(Request $request)
-        {
-             /** TIME TO VALIDATE PARAMS */
-             $validater = Validator::make($request->all(),[
-                'application_id'    =>  'required|integer',
-                'comment'           =>  'required',
-                'follow_up_date'   =>  'required|date_format:Y-m-d',
-                'follow_up_time'    =>  'required|date_format:H:i',
-                'created_by'           =>  'required'
-            ]);
-
-            if($validater->fails())
-            {
-                return response()->json([
-                    'status'=>422,
-                    'errors'=>$validater->errors()
-                ],422);
-            }
-            else
-            { 
-            
-                $query=DB::table('application_followups')->insert($request->all());
-                if($query){
-                    return response()->json([
-                        'status'=>200,
-                        'message'=>'Follow Up added For Current Application  '
-                        ]);
-                }else{
-                    return response()->json([
-                        'status'=>404,
-                        'message'=>'Something Went Wrong'
-                        ]);
-                }
-            }
-        }
-
-        public function close_follow_up(Request $request)
-        {
-            /** TIME TO VALIDATE PARAMS */
-            $validater = Validator::make($request->all(),[
-                'id'        =>  'required|integer',
-                'user_id'   =>  'required'
-            ]);
-
-            if($validater->fails())
-            {
-                return response()->json([
-                    'status'=>422,
-                    'errors'=>$validater->errors()
-                ],422);
-            }
-            else
-            {
-                $do_job    =   DB::table('application_followups')->where('id',$request->id)
-                ->update(['has_followed_up'=>1, 'followed_by'=>$request->user_id]);
-                
-                if($do_job){
-                    return response()->json([
-                        'status'=>200,
-                        'message'=>' Application  status changed'
-                        ]);
-                }else{
-                    return response()->json([
-                        'status'=>404,
-                        'message'=>'Something Went Wrong'
-                        ]);
-                } 
-            }
-        }
-
-        public function get_my_follow_up(Request $request)
-        {
-            $follow_ups =DB::table('application_followups')
-            ->where(['created_by'=>$request->created_by]);
-
-            if($request->type =='current')
-            {
-                $follow_ups->where('follow_up_date', date('Y-m-d'));
-
-            }elseif ($request->type =='upcoming') 
-            {
-                $follow_ups->where('follow_up_date','>', date('Y-m-d'));
-                
-            }
-            else
-            {
-                $follow_ups->where('follow_up_date','<', date('Y-m-d'));
-            }
-            
-            
-            $follow_ups->orderBy('follow_up_time', 'ASC');
-            $result =   $follow_ups->get();
-            if(count($result)){
-                return response()->json([
-                    'status'=>200,
-                    'message'=> $result,
-                    'date'=>date('Y-m-d')
-                    ]);
-            }else{
-                return response()->json([
-                    'status'=>404,
-                    'message'=>"no follow up found for Date ".date('Y-m-d')
-                    ]);
-            }
-            
-        }
-    /***
-     * Gyaanesh Work Ends Here 
-     */
     
     public function application_remark_old(Request $request,$id)
     {
@@ -660,6 +671,7 @@ class ApplicationController extends Controller
                 'follow'=>$follow
         ]);
     }
+    
     public function referredstatus(Request $request)
     {
         

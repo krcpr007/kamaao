@@ -31,14 +31,14 @@ class add_task extends FormRequest
     public function rules()
     {
         return [
-            'task_title'        => 'required',
+            'task_title'        => 'required|min:10',
             'type'              => 'required',
-            'company_id'        => 'required',
-            'price'             => 'required',
-            'expiry_date'       => 'required',
-            'number_of_steps'   => 'required',
+            'company_id'        => 'required|integer',
+            'price'             => 'required|integer',
+            'expiry_date'       => 'required|date',
+            'number_of_steps'   => 'required|integer',
             'tnc'               => 'required',
-            'belong_to_project' => 'required',
+            // 'belong_to_project' => 'required|integer',
         ];
     }
 

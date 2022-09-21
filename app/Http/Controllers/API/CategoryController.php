@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-
+use App\Http\Traits\is_enabledTrait;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
@@ -13,6 +13,7 @@ use File;
 
 class CategoryController extends Controller
 {
+    use is_enabledTrait;
     // Job Category
     public function index()
     {
@@ -41,6 +42,7 @@ class CategoryController extends Controller
                 
             }
     }
+
     public function store(Request $request)
     {
         $validater = Validator::make($request->all(),[
@@ -57,98 +59,90 @@ class CategoryController extends Controller
         }else{
             $Category = new Category;
             $Category->cat_name=$request->input('cat_name');
-           
+        
             $Category->status='enable';
 
-        $Category->save();
-            return response()->json([
-                'status'=>200,
-                'message'=>'Category Details Inserted Successfully'
-        ]);
-        }
-     }
-
-
-     public function update(Request $request,$id)
-     {
-         $validater = Validator::make($request->all(),[
-             'cat_name'=>'unique:categories,cat_name',
-             
-         ]);
- 
-         if($validater->fails())
-         {
-                 return response()->json([
-                         'status'=>505,
-                         'validation_errors'=>$validater->messages()
-                 ]);
-         }else{
-            $Category =  Category::find($id);
-            if($Category){
-             $Category->cat_name=$request->input('cat_name');
-            
-             $Category->status='enable';
- 
-         $Category->save();
-             return response()->json([
-                 'status'=>200,
-                 'message'=>'Category Details Update Successfully'
-         ]);
-         }else{
+            $Category->save();
                 return response()->json([
-                    'status'=>404,
-                    'message'=>'Category Id  Not Found'
+                    'status'=>200,
+                    'message'=>'Category Details Inserted Successfully'
             ]);
-    
+        }
+    }
+
+
+    public function update(Request $request,$id)
+    {
+        $validater = Validator::make($request->all(),[
+            'cat_name'=>'unique:categories,cat_name',
+             
+        ]);
+ 
+        if($validater->fails())
+        {
+            return response()->json([
+                'status'=>505,
+                'validation_errors'=>$validater->errors()
+            ]);
+        }
+        else
+        {
+            $Category =  Category::find($id);
+            if($Category)
+            {
+                $Category->cat_name=$request->input('cat_name'); 
+                $Category->status='enable';
+                $Category->save();
+                return response()->json([
+                    'status'=>200,
+                    'message'=>'Category Details Update Successfully'
+                ]);
+            }
+            else
+            {
+                return response()->json([
+                   'status'=>404,
+                    'message'=>'Category Id  Not Found'
+                ]);
             }
         }
-        
-      }
+    }
 
 
+    public function update_status(Request $request)
+    {
+        return $update = $this->toggle_is_enable('categories', 'id', $request->id, $request->new_status);
+    }
 
 
+    public function enable_status(Request $request, $id)
+    {
+        $Category=Category::find($id);
+        if($Category)
+        {
+            $Category->status='enable';
+            $Category->save();
+            return response()->json([
+                'status'=>200,
+                'message'=>'Category status enable'
+            ]);
+        }
+    }
 
-
-
-     public function enable_status(Request $request, $id)
-   {
-       # code...
-       
-       $Category=Category::find($id);
-       if($Category){
-           $Category->status='enable';
-           $Category->save();
-           return response()->json([
-               'status'=>200,
-               'message'=>'Category status enable'
-           ]);
-       }
-      
-       
-       
-      
-
-   }
-   public function disable_status(Request $request, $id)
-   {
-       # code...
-       
-       $Category=Category::find($id);
-       if($Category){
-           $Category->status='disable';
-           $Category->save();
-           return response()->json([
-               'status'=>200,
-               'message'=>'Category status disable'
-           ]);
-       }
-      
-       
-       
-      
-
-   }
+    public function disable_status(Request $request, $id)
+    {
+        $Category=Category::find($id);
+        if($Category)
+        {
+            $Category->status='disable';
+            $Category->save();
+            return response()->json([
+                'status'=>200,
+                'message'=>'Category status disable'
+            ]);
+        }
+    }
+    
     public function delete(Request $request, $id)
     {
         # code...

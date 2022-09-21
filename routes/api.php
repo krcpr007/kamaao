@@ -57,6 +57,8 @@ Route::post('/logingoogle',[AuthController::class,'google_login']);
 
 Route::post('/add_company',[CompanyController::class,'store']);
 Route::get('/view_company',[CompanyController::class,'index']);
+Route::post('/company/update_status',[CompanyController::class,'update_status']);
+
 Route::get('/edit_company/{id}',[CompanyController::class,'edit']);
 Route::post('/update_company/{id}',[CompanyController::class,'update']);
 Route::delete('/delete_company/{id}',[CompanyController::class,'delete']);
@@ -68,12 +70,12 @@ Route::get('/fetch_company/{company_legal_name}',[CompanyController::class,'sele
 //job Category
 
 Route::post('/add_category',[CategoryController::class,'store']);
-
 Route::get('/view_category',[CategoryController::class,'index']);
 Route::get('/edit_category/{id}',[CategoryController::class,'edit']);
 Route::post('/update_category/{id}',[CategoryController::class,'update']);
 Route::delete('/delete_category/{id}',[CategoryController::class,'delete']);
 Route::post('/disable_category/{id}',[CategoryController::class,'disable_status']);
+Route::post('/category/update_status',[CategoryController::class,'update_status']);
 Route::post('/enable_category/{id}',[CategoryController::class,'enable_status']);
 //product category
 Route::post('/add_procategory',[CategoryController::class,'procategory']);
@@ -90,6 +92,7 @@ Route::get('/view_prosubcategory',[SubcategoryController::class,'pro_subcat']);
 Route::get('/edit_prosubcategory/{id}',[SubcategoryController::class,'pro_subcatedit']);
 Route::post('/update_prosubcategory/{id}',[SubcategoryController::class,'pro_subcatupdate']);
 Route::delete('/delete_prosubcategory/{id}',[SubcategoryController::class,'pro_subcatdelete']);
+Route::post('/sub-category/update_status',[SubcategoryController::class,'update_status']);
 Route::post('/disable_prosubcategory/{id}',[SubcategoryController::class,'pro_subcatdisable_status']);
 Route::post('/enable_prosubcategory/{id}',[SubcategoryController::class,'pro_subcatenable_status']);
 
@@ -102,6 +105,8 @@ Route::get('/edit_jobs/{id}',[JobsController::class,'edit']);
 Route::post('/update_job',[JobsController::class,'update']);
 Route::post('/do_like',[JobsController::class,'do_like']);
 Route::delete('/delete_jobs/{id}',[JobsController::class,'delete']);
+
+Route::post('/jobs/update_status',[JobsController::class,'update_status']);
 Route::post('/disable_jobs/{id}',[JobsController::class,'disable_status']);
 Route::post('/enable_jobs/{id}',[JobsController::class,'enable_status']);
 
@@ -121,7 +126,7 @@ Route::post('/enable_product/{id}',[ProductController::class,'enable_status']);
 Route::post('/add_task',[TaskController::class,'store']);
 Route::get('/view_task',[TaskController::class,'index']);
 Route::get('/edit_task/{id}',[TaskController::class,'edit']);
-Route::post('/update_task_status',[TaskController::class,'update_status']);
+Route::post('/task/update_status',[TaskController::class,'update_status']);
 Route::post('/update_task',[TaskController::class,'update']);
 
 Route::delete('/delete_task/{id}',[TaskController::class,'delete_task']);
@@ -140,7 +145,6 @@ Route::post('/disable_project/{id}',[ProjectController::class,'disable_status'])
 Route::post('/enable_project/{id}',[ProjectController::class,'enable_status']);
 
 //application 
-
 Route::get('/view_application',[ApplicationController::class,'application_view']);
 Route::post('/store_application',[ApplicationController::class,'store']);
 Route::post('/update_application_stage',[ApplicationController::class,'update_application_stage']);

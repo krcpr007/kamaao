@@ -25,7 +25,6 @@ class ProjectController extends Controller
 
     public function index()
     {
-      
         $projects=Project::with('task')->orderby('id','desc')->get();
         foreach ($projects as  $project) 
         {

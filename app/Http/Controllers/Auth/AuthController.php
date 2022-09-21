@@ -14,6 +14,66 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     //
+
+    /**
+     * Gyaanesh Work Starts
+     */
+
+    public function update_employee(Request $request, $id){
+        $employee=User::find($id);
+        if($employee)
+        {
+            $employee->name=$request->input('name');
+            $employee->email=$request->input('email');
+            $employee->password=Hash::make($request->input('password'));
+            $employee ->enc_pass=$request->input('password');
+            $employee->mobile=$request->input('mobile');
+
+            $employee->user_type=$request->input('employee_designation');
+            $employee->status='enable';
+            if($request->hasfile('profile_pic'))
+            {
+                $Image=DB::table('users')->where(['id'=>$id])->get();
+                $file=public_path('Profile_pic/'.$Image[0]->profile_pic);
+                
+                if(File::exists($file))
+                {
+                    File::delete($file);
+                }
+                $image=$request->file('profile_pic');
+                $ext=$image->extension();
+                $image_name=time().'.'.$ext;
+                $image->move(public_path('Profile_pic'),$image_name);
+                $employee->profile_pic=$image_name;
+            }
+
+            if($employee->save())
+            {
+                return response()->json([
+                    'status'=>200,
+                    'message'=>'Employee Update Successfully'
+                ]);
+            }
+            else
+            {
+                return response()->json([
+                    'status'=>400,
+                    'errors'=>'Something Went Wrong'
+                ],400);
+            }
+        }
+        else
+        {
+            return response()->json([
+                'status'=>400,
+                'errors'=>'Employee Data Not Found'
+            ],400);
+        }
+    }
+
+    /**
+     * Gyaanesh Work Ends
+     */
     public function google_login(Request $request){
         $validater = Validator::make($request->all(),[
             'email'=>'email|max:191|unique:users,email',
@@ -250,36 +310,7 @@ class AuthController extends Controller
                 
             }
     }
-    public function update_employee(Request $request, $id){
-        $employee=User::find($id);
-        if($employee){
-            $employee->name=$request->input('employee_name');
-            $employee->email=$request->input('employee_email');
-            $employee->password=Hash::make($request->input('employee_pass'));
-            $employee ->enc_pass=$request->input('employee_pass');
-            $employee->mobile=$request->input('mobile');
-
-            $employee->user_type=$request->input('employee_designation');
-            $employee->status='enable';
-            if($request->hasfile('profile_pic')){
-                $Image=DB::table('users')->where(['id'=>$id])->get();
-                $file=public_path('Profile_pic/'.$Image[0]->profile_pic);
-                if(File::exists($file)){
-                    File::delete($file);
-                }
-                $image=$request->file('profile_pic');
-                $ext=$image->extension();
-                $image_name=time().'.'.$ext;
-                $image->move(public_path('Profile_pic'),$image_name);
-                $employee->profile_pic=$image_name;
-            }
-            $employee->save();
-            return response()->json([
-                'status'=>200,
-                'message'=>'Employee Update Successfully'
-            ]);
-        }
-    }
+    
     public function enable_employee(Request $request, $id)
     {
         # code...
