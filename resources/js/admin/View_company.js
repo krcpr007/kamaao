@@ -33,19 +33,41 @@ function View_company() {
 
 
 
-  function company_delete(id) {
-    axios.delete('api/delete_company/' + id).then((res) => {
-      if (res.data.status === 204) {
+    function company_delete(id) 
+    {
+      console.log(id)
+      swal({
+        title: "Are you sure?",
+        text: "You want to delete this user?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then(willDelete => {
+        if (willDelete) 
+        {
+          axios.delete('api/delete_company/' + id)
+          .then(res => {  
+            swal({
+              title: "Done!",
+              text: "Record Deleted ",
+              icon: "success",
+              timer: 2000,
+              button: false
+            })
+            showlist();
+          });
+        }
+      });
+    }
+  
+  
+    function toggle_status(id, newStatus) {
 
-        swal('warning', res.data.message, 'warning');
-        showlist();
-      }
-    })
-
-  }
-  function enable_company(id) {
-
-    axios.post('api/enable_company/' + id).then((res) => {
+    axios.post('api/company/update_status',  {
+      id:id,
+      new_status:1
+    }).then((res) => {
       if (res.data.status === 200) {
 
         showlist();
@@ -57,21 +79,7 @@ function View_company() {
     })
 
   }
-
-  function disable_company(id) {
-
-    axios.post('api/disable_company/' + id).then((res) => {
-      if (res.data.status === 200) {
-
-
-        swal('success', res.data.message, 'success');
-        showlist();
-
-      }
-
-    })
-
-  }
+   
   if (loading == true) {
     return (<div>Loding</div>)
   } else {
@@ -87,7 +95,7 @@ function View_company() {
             <td>{item.company_url}
             </td>
             <td className="DisPlayInline"><Link className='btn btn-success btn-sm margin_left5 btn-bg-Green' to={`edit_company/${item.id}`} >Edit</Link>
-              {(item.status == 'enable') ? <span className='btn btn-outline-warning btn-sm margin_left5' onClick={() => disable_company(item.id)}>Disable</span> : <span className='btn btn-outline-primary btn-sm margin_left5' onClick={() => enable_company(item.id)}>Enable</span>} <span className='btn btn-danger btn-sm margin_left5' onClick={() => company_delete(item.id)}>Delete</span>
+              {(item.is_enabled == '1') ? <span className='btn btn-outline-warning btn-sm margin_left5' onClick={() => toggle_status(item.id, 0)}>Disable</span> : <span className='btn btn-outline-primary btn-sm margin_left5' onClick={() => toggle_status(item.id, 1)}>Enable</span>} <span className='btn btn-danger btn-sm margin_left5' onClick={() => company_delete(item.id)}>Delete</span>
             </td>
           </tr>
         );

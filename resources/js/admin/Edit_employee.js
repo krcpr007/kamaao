@@ -36,9 +36,9 @@ function Edit_employee(props) {
     { label: 'Tele caller', value: '5' },
   ];
   const [error_list, setError] = useState({
-    employee_name: "",
-    employee_email: "",
-    employee_pass: "",
+    name: "",
+    email: "",
+    password: "",
     mobile:"",
     profile_pic:"",
     designtion:""
@@ -49,13 +49,13 @@ function Edit_employee(props) {
     //const { name, value } = e.target;
     setEmployee({ ...Employee, [e.target.name]: e.target.value });
     if(e.target.name==='name'){
-      error_list.employee_name='';
+      error_list.name='';
     }
     if(e.target.name==='email'){
-      error_list.employee_email='';
+      error_list.email='';
     }
     if(e.target.name==='enc_pass'){
-      error_list.employee_pass='';
+      error_list.password='';
     }
     if(e.target.name==='mobile'){
       error_list.mobile='';
@@ -111,17 +111,17 @@ function Edit_employee(props) {
     const formData = new FormData();
 
     const employee_id = props.match.params.id;
-    formData.append('employee_name', Employee.name);
-    formData.append('employee_email', Employee.email);
-    formData.append('employee_pass', Employee.enc_pass);
+    formData.append('name', Employee.name);
+    formData.append('email', Employee.email);
+    formData.append('password', Employee.enc_pass);
     formData.append('mobile', Employee.mobile);
     
     formData.append('profile_pic',Profile);
     
     if (designtion != '') {
-      formData.append('employee_designation', designtion);
+      formData.append('designtion', designtion);
     } else {
-      formData.append('employee_designation', Employee.user_type);
+      formData.append('designtion', Employee.user_type);
     }
     if (isSubmit==true) {
 
@@ -155,19 +155,19 @@ function Edit_employee(props) {
     
 
     if (!values.name) {
-      errors.employee_name = "Name is required!";
+      errors.name = "Name is required!";
     }
     if (!values.email) {
-      errors.employee_email = "Email is required!";
+      errors.email = "Email is required!";
     } else if (!regex.test(values.email)) {
-      errors.employee_email = "This is not a valid email format!";
+      errors.email = "This is not a valid email format!";
     }
     if (!values.enc_pass) {
-      errors.employee_pass = "Password is required";
+      errors.password = "Password is required";
     } else if (values.enc_pass.length < 4) {
-      errors.employee_pass = "Password must be more than 4 characters";
+      errors.password = "Password must be more than 4 characters";
     } else if (values.enc_pass.length > 10) {
-      errors.employee_pass = "Password cannot exceed more than 10 characters";
+      errors.password = "Password cannot exceed more than 10 characters";
     }
      if (!values.mobile.length) {
       errors.mobile = "Mobile number is required!";
@@ -213,14 +213,14 @@ function Edit_employee(props) {
                       <input type="text"
                         name="name"
                         value={Employee.name}
-                        //{...register("employee_name",{required:'Employee Name is required'})}
+                        //{...register("name",{required:'Employee Name is required'})}
                         onChange={handelemployee}
                         placeholder='Enter Employee Name'
-                        className="form-control" id="employee_name" />
+                        className="form-control" id="name" />
 
                     </div>
-                    <span className='text-danger'>{error_list.employee_name}</span>
-                    {/* {errors.employee_name && <span className='text-danger'>{errors.employee_name?.message}</span>} */}
+                    <span className='text-danger'>{error_list.name}</span>
+                    {/* {errors.name && <span className='text-danger'>{errors.name?.message}</span>} */}
                   </div>
 
                 </div>
@@ -234,13 +234,13 @@ function Edit_employee(props) {
                       <input type="email"
                         name="email"
                         value={Employee.email}
-                        //{...register("employee_email",{required:'Employee is required'})}
+                        //{...register("email",{required:'Employee is required'})}
                         onChange={handelemployee}
                         placeholder='Enter Employee Email'
-                        className="form-control" id="employee_email" />
+                        className="form-control" id="email" />
                     </div>
-                    <span className='text-danger'>{error_list.employee_email}</span>
-                    {/* {errors.employee_email && <span  className='text-danger'> {errors.employee_email?.message}</span>} */}
+                    <span className='text-danger'>{error_list.email}</span>
+                    {/* {errors.email && <span  className='text-danger'> {errors.email?.message}</span>} */}
 
                   </div>
                 </div>
@@ -254,13 +254,13 @@ function Edit_employee(props) {
                       <input type="password"
                         name="enc_pass"
                         defaultValue={Employee.enc_pass}
-                        // {...register("employee_pass",{required:'Password is required'})}
+                        // {...register("password",{required:'Password is required'})}
                         onChange={handelemployee}
                         placeholder='Enter Employee Password'
-                        className="form-control" id="employee_pass" />
+                        className="form-control" id="password" />
                     </div>
-                    <span className='text-danger'>{error_list.employee_pass}</span>
-                    {/* {errors.employee_pass && <span  className='text-danger'> {errors.employee_pass?.message}</span>} */}
+                    <span className='text-danger'>{error_list.password}</span>
+                    {/* {errors.password && <span  className='text-danger'> {errors.password?.message}</span>} */}
 
                   </div>
                 </div>

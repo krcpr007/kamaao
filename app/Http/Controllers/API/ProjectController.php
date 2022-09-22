@@ -28,7 +28,8 @@ class ProjectController extends Controller
         $projects=Project::with('task')->orderby('id','desc')->get();
         foreach ($projects as  $project) 
         {
-            foreach ($project->task as $t) {
+            foreach ($project->task as $t) 
+            {
                 $t['steps'] = task_steps::where('task_id', $t->id)->get();
             }
         }
@@ -215,6 +216,9 @@ class ProjectController extends Controller
         return $this->like($request);
     }
 
+
+
+    /** PROJECT's APPLICATIONS */
     public function create_project_application(Request $request)
     {
         $hasUserApplied        =   project_application::where('user_id',$request->user_id )->where('project_id', $request->project_id)->get();
@@ -239,7 +243,27 @@ class ProjectController extends Controller
             ]);
         }
     }
+    public function get_applications()
+    {
+        $applications =  project_application::with('user', 'project')->get();
+        // print_r($applications);
+        if($applications)
+        {           
+            return response()->json([
+                'status'=>  200,
+                'data'  =>  $applications
+            ]);
+        }
+    }
 
+    public function get_project_application($id)
+    {
+        $application =  project_application::with('user', 'project')->where('id', $id)->get();
+        return response()->json([
+            'status'=>200,
+            'data'=>['application'=> $application]
+        ]);
+    }
  
     /**
      * Gyaanesh Work Ends

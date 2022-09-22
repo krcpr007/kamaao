@@ -521,7 +521,7 @@ const job_category_ops = job_catResponse.map((response) => (
                       <div className='col-xl-4 col-lg-4 col-md-4 col-sm-12 align-self-center'>
                         <label htmlFor="Company Name" className="labelStyle">Company Legal Name</label>
                       </div>
-                      <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-center InputBox InputHeight">
+                      <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 text-center InputBox InputHeight align-self-center">
                         <div className="input-group">
                           <Select
                             className="custom-select  multipleSelectOption"
@@ -533,21 +533,40 @@ const job_category_ops = job_catResponse.map((response) => (
                         </div>
                         <span className="text-danger" id="#err_company_legal_name">{error_list.company_legal_name}</span>
                       </div>
+                       {/* image upload box */}
+                       {(() => {
+                        if (imageUrl != '') {
+                          return (<div className='col-xl-3 col-lg-3 col-md-2 col-sm-3 col-4 mb-3'><p>
+                            <img src={imageUrl} className='imageUploadBox imageUploadBoxMargin-l' /></p>
+                            </div>)
+                        }else
+                        {
+                          if (getCompany.company_logo) {
+                            return (<div className='col-xl-3 col-lg-3 col-md-2 col-sm-3 col-4 mb-3'><p ><img src={`/company/${getCompany.company_logo}`} className='imageUploadBox  imageUploadBoxMargin-l' /></p></div>)
+                          } else {
+                            return (
+                              <div className='col-xl-2 col-lg-2 col-md-2 col-sm-3 col-4 mb-3 imageUploadBox imageUploadBox1 mb-3'><p className='logoName'>Logo <br /> Preview </p></div>
+                            )
+                          }
+                        }
+
+                      })()}
                     </div>
                     {/* Comapny Popular Name */}
                     <div className="row mb-3">
                       <div className='col-xl-4 col-lg-4 col-md-4 col-sm-12 align-self-center'>
                         <label htmlFor="company popular name" className="labelStyle">Company Popular Name</label>
                       </div>
-                      <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-center InputBox InputHeight">
+                      <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 text-center InputBox InputHeight">
                         <input type="text" name="company_popular_name"
                           placeholder='Ex : Kamaao Jobs'
-
+                          readOnly= {true}
                           value={getCompany.company_popular_name}
-                          onChange={handleCompany}
+                          // onChange={handleCompany}
                           className="form-control" id="comp_pn" />
                         <span className="text-danger" id="#err_company_popular_name">{error_list.company_popular_name}</span>
                       </div>
+                       
                     </div>
 
                     <div className='row'>
@@ -561,13 +580,14 @@ const job_category_ops = job_catResponse.map((response) => (
                             <input type="text" name="company_url"
                               placeholder='Ex : https//www.kamaao.app/home Url'
                               value={getCompany.company_url}
-                              onChange={handleCompany}
+                              readOnly= {true}
+                              // onChange={handleCompany}
                               className="form-control" id="url" />
                             <span className="text-danger" id="#err_company_url">{error_list.company_url}</span>
                           </div>
                         </div>
                         {/* Company Logo */}
-                        <div className="row mb-3">
+                        {/* <div className="row mb-3">
                           <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 align-self-center'>
                             <label htmlFor="Company Logo" className="labelStyle">Company Logo</label>
                           </div>
@@ -575,28 +595,15 @@ const job_category_ops = job_catResponse.map((response) => (
                             <input type="file" name="company_logo"
                               placeholder='Ex : https//www.kamaao.app/home'
                               value={companyInput.company_logo}
-                              onChange={handeImage}
+                              // onChange={handeImage}
+                              readOnly= {true}
                               className="form-control" id="logo" />
                             <span className="text-danger" id="#err_company_logo">{error_list.company_logo}</span>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
 
-                      {/* image upload box */}
-                      {(() => {
-                        if (imageUrl != '') {
-                          return (<div className='col-xl-3 col-lg-3 col-md-2 col-sm-3 col-4 mb-3'><p ><img src={imageUrl} className='imageUploadBox imageUploadBoxMargin-l' /></p></div>)
-                        } else {
-                          if (getCompany.company_logo) {
-                            return (<div className='col-xl-3 col-lg-3 col-md-2 col-sm-3 col-4 mb-3'><p ><img src={`/company/${getCompany.company_logo}`} className='imageUploadBox  imageUploadBoxMargin-l' /></p></div>)
-                          } else {
-                            return (
-                              <div className='col-xl-2 col-lg-2 col-md-2 col-sm-3 col-4 mb-3 imageUploadBox imageUploadBox1 mb-3'><p className='logoName'>Logo <br /> Preview </p></div>
-                            )
-                          }
-                        }
-
-                      })()}
+                    
                     </div>
                     {/* About Company */}
                     <div className="row mb-3">
@@ -605,6 +612,7 @@ const job_category_ops = job_catResponse.map((response) => (
                       </div>
                       <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 InputBox">
                         <textarea name="about_company"
+                          readOnly= {true}
                           placeholder='Ex : Eleifend risus ante ad erat elit quisque cursus, quisque mollis aenean ultrices arcu auctor, sollicitudin curae vitae quam netus facilisis, tristique tellus viverra, a cubilia luctus viverra eleifend magna varius, ultrices sed etiam at velit habitant tristique lectus!'
                           onChange={handleCompany}
                           className="form-control" id="about_comp" rows="5" cols="5" value={getCompany.about_company}>

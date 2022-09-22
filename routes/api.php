@@ -75,8 +75,9 @@ Route::get('/edit_category/{id}',[CategoryController::class,'edit']);
 Route::post('/update_category/{id}',[CategoryController::class,'update']);
 Route::delete('/delete_category/{id}',[CategoryController::class,'delete']);
 Route::post('/disable_category/{id}',[CategoryController::class,'disable_status']);
-Route::post('/category/update_status',[CategoryController::class,'update_status']);
+Route::post('/jobs/category/update_status',[CategoryController::class,'update_status']);
 Route::post('/enable_category/{id}',[CategoryController::class,'enable_status']);
+
 //product category
 Route::post('/add_procategory',[CategoryController::class,'procategory']);
 Route::get('/view_procategory',[CategoryController::class,'pro_cat']);
@@ -136,7 +137,6 @@ Route::post('/enable_task/{id}',[TaskController::class,'enable_status']);
 //Project 
 Route::get('/projects',[ProjectController::class,'index']);
 Route::post('/add_project',[ProjectController::class,'store']);
-Route::post('/create_project_application',[ProjectController::class,'create_project_application']);
 Route::get('/edit_project/{id}',[ProjectController::class,'edit']);
 Route::post('/update_project',[ProjectController::class,'update']);
 Route::post('/project/update_status',[ProjectController::class,'update_status']);
@@ -144,7 +144,15 @@ Route::delete('/delete_project/{id}',[ProjectController::class,'delete']);
 Route::post('/disable_project/{id}',[ProjectController::class,'disable_status']);
 Route::post('/enable_project/{id}',[ProjectController::class,'enable_status']);
 
-//application 
+// Project Application
+
+Route::get('/project/application/{id}',[ProjectController::class,'get_project_application']);
+Route::post('/project/application/create',[ProjectController::class,'create_project_application']);
+Route::get('/project/applications',[ProjectController::class,'get_applications']);
+
+// Route::get('/project/application/{id}',[ProjectController::class,'get_project_application']);
+
+//JOb application 
 Route::get('/view_application',[ApplicationController::class,'application_view']);
 Route::post('/store_application',[ApplicationController::class,'store']);
 Route::post('/update_application_stage',[ApplicationController::class,'update_application_stage']);
@@ -160,7 +168,6 @@ Route::post('/referredstatus',[ApplicationController::class,'referredstatus']);
 Route::get('/applcation_followup_fetch/{id}',[ApplicationController::class,'applcation_followup_fetch']);
 Route::get('/applcation_expire/{id}',[ApplicationController::class,'applcation_expire']);
 Route::delete('/delete_project/{id}',[ProjectController::class,'delete']);
-
 
 //dynamic_dropdown
 

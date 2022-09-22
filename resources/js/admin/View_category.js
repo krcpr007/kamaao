@@ -32,46 +32,50 @@ function View_category() {
   },[]);
 
    
+    function category_delete(id) 
+    {
+      console.log(id)
+      swal({
+        title: "Are you sure?",
+        text: "You want to delete this user?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then(willDelete => {
+        if (willDelete) 
+        {
+          axios.delete('api/delete_category/' + id)
+          .then(res => {  
+            swal({
+              title: "Done!",
+              text: "Record Deleted ",
+              icon: "success",
+              timer: 1500,
+              button: false
+            })
+            showlist();
+          });
+        }
+      });
+    }
+   
+ 
 
-  function category_delete(id){
-    axios.delete('api/delete_category/'+id).then((res)=>{
-      if(res.data.status === 204){
-        
-        swal('warning',res.data.message,'warning');
-        showlist();
-      } 
+function toggle_status(id, newStatus) {
+
+  axios.post('api/jobs/category/update_status',  {
+    id:id,
+    new_status:newStatus
+  }).then((res) => {
+    if (res.data.status === 200) {
+      showlist();
+      swal('success', res.data.message, 'success');
+    }
   })
+}
 
-  } 
-  function enable_category(id){
-      
-   axios.post('api/enable_category/'+id).then((res)=>{
-     if(res.data.status === 200){
-      
-       
-       swal('success',res.data.message,'success');
-       showlist();
-       //location.reload();
-     }
-
- })
-
- }  
  
- function disable_category(id){
-     
-    axios.post('api/disable_category/'+id).then((res)=>{
-      if(res.data.status === 200){
-        
-       
-        swal('success',res.data.message,'success');
-        showlist();
-        
-      }
- 
-  })
- 
-  } 
   if(loading==true){
     return(<div><Spin /></div>)
   }else{
@@ -84,9 +88,7 @@ function View_category() {
           <tr key={item.id}>
             <th scope="row">{index + 1}</th>
             <td>{item.cat_name}</td>
-            
-          
-            <td><Link className='btn btn-success btn-sm' to={`edit_category/${item.id}`} >Edit</Link> {(item.status=='enable')?<span className='btn btn-outline-warning btn-sm' onClick={()=>disable_category(item.id)}>Disable</span>:<span className='btn btn-outline-primary  btn-sm' onClick={()=>enable_category(item.id)}>Enable</span>} <span className='btn btn-danger btn-sm' onClick={()=>category_delete(item.id)}>Delete</span></td>
+            <td><Link className='btn btn-success btn-sm' to={`edit_category/${item.id}`} >Edit</Link> {(item.is_enabled=='1')?<span className='btn btn-outline-warning btn-sm' onClick={()=>toggle_status(item.id, 0)}>Disable</span>:<span className='btn btn-outline-primary  btn-sm' onClick={()=>toggle_status(item.id,1)}>Enable</span>} <span className='btn btn-danger btn-sm' onClick={()=>category_delete(item.id)}>Delete</span></td>
           </tr>
          
       

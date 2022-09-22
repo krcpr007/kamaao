@@ -333,7 +333,6 @@ class ApplicationController extends Controller
             ]);
             $update_stage=DB::table('job_application')->where('id',$request->application_id)
                             ->update(['current_stage'=>$request->new_stage]);
-                            
             if($update_stage){
                 return response()->json([
                     'status'=>200,
@@ -672,43 +671,43 @@ class ApplicationController extends Controller
         ]);
     }
     
-    public function referredstatus(Request $request)
-    {
+    // public function referredstatus(Request $request)
+    // {
         
-        $status =$request->status;
-        $application_id=$request->application_id;
-        $start_time	=date('d-m-Y h:i:s a');
-        $end_time=date('Y-m-d', strtotime($start_time. ' +30 days'));// to be changed as per job preset 
-        // $chkapp_id = DB::table('application_expired')->where(['application_id'=>$app_id])->get()->count();
-        $is_reffered = DB::table('job_app_reffered_to')->where(['application_id'=>$app_id])->get()->count();
-        if($is_reffered>0){
-            return response()->json([
-                'status'=>304,
-                'message'=>' Already referred'
-                ]);
-        }else{
-            $query=DB::table('job_app_reffered_to')->insert(['application_id' =>$application_id, 'status' =>$status, 'company_id'=>22]);
-                if($query)
-                {
+    //     $status =$request->status;
+    //     $application_id=$request->application_id;
+    //     $start_time	=date('d-m-Y h:i:s a');
+    //     $end_time=date('Y-m-d', strtotime($start_time. ' +30 days'));// to be changed as per job preset 
+    //     // $chkapp_id = DB::table('application_expired')->where(['application_id'=>$app_id])->get()->count();
+    //     $is_reffered = DB::table('job_app_reffered_to')->where(['application_id'=>$app_id])->get()->count();
+    //     if($is_reffered>0){
+    //         return response()->json([
+    //             'status'=>304,
+    //             'message'=>' Already referred'
+    //             ]);
+    //     }else{
+    //         $query=DB::table('job_app_reffered_to')->insert(['application_id' =>$application_id, 'status' =>$status, 'company_id'=>22]);
+    //             if($query)
+    //             {
 
-                    /**         MARK THE APPLICATION AS REFFERED  */
-                    DB::table('job_application')
-                    ->where('id', $app_id)
-                    ->update(array('Is_reffered' => 1));  // u
+    //                 /**         MARK THE APPLICATION AS REFFERED  */
+    //                 DB::table('job_application')
+    //                 ->where('id', $app_id)
+    //                 ->update(array('Is_reffered' => 1));  // u
                     
-                    return response()->json([
-                        'status'=>200,
-                        'message'=>'Application Referred'
-                        ]);
-                }else
-                {
-                    return response()->json([
-                        'status'=>404,
-                        'message'=>'Something Went Wrong'
-                        ]);
-                }
-        }
-    }
+    //                 return response()->json([
+    //                     'status'=>200,
+    //                     'message'=>'Application Referred'
+    //                     ]);
+    //             }else
+    //             {
+    //                 return response()->json([
+    //                     'status'=>404,
+    //                     'message'=>'Something Went Wrong'
+    //                     ]);
+    //             }
+    //     }
+    // }
 
     public function applcation_expire($id)
     {

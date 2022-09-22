@@ -42,30 +42,44 @@ function View_job() {
   })
 
   } 
-  function disable_Job(id){
-   axios.post('api/disable_jobs/'+id).then((res)=>{
-     if(res.data.status === 200){
-       swal('success',res.data.message,'success');
-       showlist();
+
+  
+  function toggle_status(id, newStatus) {
+
+    axios.post('api/jobs/update_status',  {
+      id:id,
+      new_status:newStatus
+    }).then((res) => {
+      if (res.data.status === 200) {
+
+        showlist();
+
+        swal('success', res.data.message, 'success');
+        //location.reload();
+      }
+    })
+  }
+//   function disable_Job(id){
+//    axios.post('api/disable_jobs/'+id).then((res)=>{
+//      if(res.data.status === 200){
+//        swal('success',res.data.message,'success');
+//        showlist();
      
        
-     }
+//      }
 
- })
+//  })
+//  } 
+//  function enable_Job(id){
+//   axios.post('api/enable_jobs/'+id).then((res)=>{
+//     if(res.data.status === 200){
+//       swal('success',res.data.message,'success');
+//       showlist();      
+//     }
 
- } 
- function enable_Job(id){
-  axios.post('api/enable_jobs/'+id).then((res)=>{
-    if(res.data.status === 200){
-      swal('success',res.data.message,'success');
-      showlist();
-    
-      
-    }
+// })
 
-})
-
-}  
+// }
   var viewdata='';
   
   viewdata=
@@ -79,7 +93,7 @@ function View_job() {
           <div className="fun_btngroub">
             <Link to={`edit_jobs/${item.id}`} className='btn btn-info btn-sm'>Edit</Link>
             &nbsp;<span className='btn btn-danger btn-sm' onClick={()=>job_delete(item.id)}>Delete</span>
-            &nbsp; {(item.status == 'enable') ? <span className='btn btn-outline-warning btn-sm' onClick={() => disable_Job(item.id)}> Disable</span> : <span className='btn btn-outline-primary btn-sm' onClick={() => enable_Job(item.id)}>Enable</span>}
+            &nbsp; {(item.is_enabled == '1') ? <span className='btn btn-outline-warning btn-sm' onClick={() => toggle_status(item.id, 1)}> Disable</span> : <span className='btn btn-outline-primary btn-sm' onClick={() => toggle_status(item.id, 0)}>Enable</span>}
           </div>
         <div className='row'>
 

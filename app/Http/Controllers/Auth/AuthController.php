@@ -20,17 +20,28 @@ class AuthController extends Controller
      */
 
     public function update_employee(Request $request, $id){
+        
+        $validater = Validator::make($request->all(),[
+            'name'  =>  'required|max:30',
+            'email' =>  'required|email|max:191',
+        ]);
+        if($validater->fails())
+        {
+            return response()->json([
+                'status'=>422,
+                'errors'=>$validater->errors()
+            ],422);
+        }
         $employee=User::find($id);
+        
         if($employee)
         {
-            $employee->name=$request->input('name');
-            $employee->email=$request->input('email');
-            $employee->password=Hash::make($request->input('password'));
-            $employee ->enc_pass=$request->input('password');
-            $employee->mobile=$request->input('mobile');
-
-            $employee->user_type=$request->input('employee_designation');
-            $employee->status='enable';
+            $employee->name=$request->name;
+            $employee->email=$request->email;
+            $employee->password=Hash::make($request->password);
+            $employee ->enc_pass=$request->password;
+            $employee->mobile=$request->mobile;
+            $employee->user_type=$request->designation;
             if($request->hasfile('profile_pic'))
             {
                 $Image=DB::table('users')->where(['id'=>$id])->get();
@@ -77,8 +88,6 @@ class AuthController extends Controller
     public function google_login(Request $request){
         $validater = Validator::make($request->all(),[
             'email'=>'email|max:191|unique:users,email',
-
-
         ]);
 
         if($validater->fails())

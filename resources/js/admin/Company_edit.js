@@ -85,21 +85,16 @@ function Company_edit(props) {
 
     axios.post('api/update_company/' + company_id, formData).then(res => {
       if (res.data.status === 200) {
-
-
         swal("Success", res.data.message, "success");
         getCompany();
         setError([]);
-
-
-      } else {
+      } 
+      else 
+      {
         console.log(res.data.validation_errors);
         setError(res.data.validation_errors);
       }
-
     });
-
-
   }
 
   return (<div className='container-fluid paddingRight mt-4'>
